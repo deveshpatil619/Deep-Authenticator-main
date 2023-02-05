@@ -1,3 +1,4 @@
+
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -10,6 +11,8 @@ from face_auth.business_val.user_val import LoginValidation, RegisterValidation
 from face_auth.constant.auth_constant import ALGORITHM, SECRET_KEY
 from face_auth.entity.user import User
 
+## This code implements a set of endpoints for authentication purposes using FastAPI.
+#  It uses the FastAPI library to define a set of APIs and the endpoint to use for authentication.
 
 class Login(BaseModel):
     """Base model for login
@@ -31,7 +34,8 @@ class Register(BaseModel):
     password1: str
     password2: str
 
-
+## Creates an APIRouter instance to handle the authentication APIs. The router is set up with a prefix of "/auth",
+#  a tag of "auth", and a response with a 401 status code.
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
