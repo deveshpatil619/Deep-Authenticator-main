@@ -182,36 +182,46 @@ class RegisterValidation:
             return False
 
     def is_password_valid(self) -> bool:
+        """This function checks if the length of the password1 and password2 fields in the user object are between 8 and 16 characters long. 
+        If the length is within this range, it returns True, otherwise it returns False."""
         if len(self.user.password1) >= 8 and len(self.user.password2) <= 16:
             return True
         else:
             return False
 
     def is_password_match(self) -> bool:
+        """ This function returns True if the password1 and password2 are matched"""
         if self.user.password1 == self.user.password2:
             return True
         else:
             return False
 
     def is_details_exists(self) -> bool:
-        username_val = self.userdata.get_user({"username": self.user.username})
-        emailid_val = self.userdata.get_user({"email_id": self.user.email_id})
-        uuid_val = self.userdata.get_user({"UUID": self.uuid})
-        if username_val == None and emailid_val == None and uuid_val == None:
-            return True
+        """The function is_details_exists checks if the user already exists in the database or not."""
+        username_val = self.userdata.get_user({"username": self.user.username}) ## uses the get_user method of UserData to search the database with the given username.
+        emailid_val = self.userdata.get_user({"email_id": self.user.email_id}) ## uses the get_user method of UserData to search the database with the given email id.
+        uuid_val = self.userdata.get_user({"UUID": self.uuid}) ## uses the get_user method of UserData to search the database with the given UUID.
+        if username_val == None and emailid_val == None and uuid_val == None: # The final if statement checks if all of the username_val, emailid_val and uuid_val are None, meaning that no user was found in the database with these details.
+            return True # If the details do not exist in the database, the function returns True.
+            # Otherwise, it returns False.
+
         return False
 
     @staticmethod
     def get_password_hash(password: str) -> str:
-        return bcrypt_context.hash(password)
+        """This method get_password_hash is a static method. It takes a string parameter password and returns
+         the hash of the given password as a string. """
+        return bcrypt_context.hash(password) # The hash is calculated using the bcrypt_context object that
+        # was created in the __init__ method of the class. This method is used to store the password securely
+        #  in the database by storing its hash instead of the actual password.
 
     def validate_registration(self) -> bool:
 
         """This checks all the validation conditions for the user registration
         """
-        if len(self.validate()) != 0:
-            return {"status": False, "msg": self.validate()}
-        return {"status": True}
+        if len(self.validate()) != 0:  ## if the validate method returns some of the error messages
+            return {"status": False, "msg": self.validate()} ## set the status to false and return the error message of the validate
+        return {"status": True} ## if the validate method is error free then return the status as true
 
     def authenticate_user_registration(self) -> bool:
         """_summary_: This saves the user details in the database
@@ -222,11 +232,11 @@ class RegisterValidation:
         """
         try:
             logging.info("Validating the user details while Registration.....")
-            if self.validate_registration()["status"]:
+            if self.validate_registration()["status"]: ## checks if the validation is successful
                 logging.info("Generating the password hash.....")
-                hashed_password: str = self.get_password_hash(self.user.password1)
-                user_data_dict: dict = {
-                    "Name": self.user.Name,
+                hashed_password: str = self.get_password_hash(self.user.password1) ## generates the password hash using the get_password_hash function and saves it to the hashed_password variable.
+                user_data_dict: dict = { # creates a dictionary of user data to be saved in the database
+                    "Name": self.user.Name, 
                     "username": self.user.username,
                     "password": hashed_password,
                     "email_id": self.user.email_id,
@@ -234,10 +244,13 @@ class RegisterValidation:
                     "UUID": self.uuid,
                 }
                 logging.info("Saving the user details in the database.....")
-                self.userdata.save_user(user_data_dict)
+                self.userdata.save_user(user_data_dict)  ## saves the user data to the database
                 logging.info("Saving the user details in the database completed.....")
-                return {"status": True, "msg": "User registered successfully"}
+                return {"status": True, "msg": "User registered successfully"} ## returns the status of the registration process and a message indicating successful registration
             logging.info("Validation failed while Registration.....")
-            return {"status": False, "msg": self.validate()}
+            return {"status": False, "msg": self.validate()} ## returns the status of the registration process and a message indicating the failure of the validation process
         except Exception as e:
             raise e
+
+
+
