@@ -175,13 +175,17 @@ class UserLoginEmbeddingValidation:
     #         raise AppException(e, sys) from e
 
 
-class UserRegisterEmbeddingValidation:
-    def __init__(self, uuid_: str) -> None:
+## UserRegisterEmbeddingValidation that handles user's embedding validation while registration. 
+# It has the following methods:
+class UserRegisterEmbeddingValidation: 
+    def __init__(self, uuid_: str) -> None:  ##the constructor method that initializes the class with uuid_ and 
+        #creates an instance of the UserEmbeddingData class.
         self.uuid_ = uuid_
         self.user_embedding_data = UserEmbeddingData()
 
     def save_embedding(self, files: bytes):
-        """This function will generate embedding list and save it to database
+        """This method takes files as an argument which is the byte representation of the images, 
+        generates the embedding list and then calculates the average embedding of the images. 
         Args:
             files (dict): Bytes of images
 
@@ -189,10 +193,11 @@ class UserRegisterEmbeddingValidation:
             Embedding: saves the image to database
         """
         try:
-            embedding_list = UserLoginEmbeddingValidation.generate_embedding_list(files)
-            avg_embedding_list = UserLoginEmbeddingValidation.average_embedding(
-                embedding_list
-            )
-            self.user_embedding_data.save_user_embedding(self.uuid_, avg_embedding_list)
+            embedding_list = UserLoginEmbeddingValidation.generate_embedding_list(files) #It calls the generate_embedding_list 
+            #method from the UserLoginEmbeddingValidation class with the files as input. The method generates the embedding from the files.
+            avg_embedding_list = UserLoginEmbeddingValidation.average_embedding(embedding_list) # It calls the average_embedding 
+            #method from the UserLoginEmbeddingValidation class with the embedding_list as input. This method calculates the average embedding.
+            self.user_embedding_data.save_user_embedding(self.uuid_, avg_embedding_list) #code saves the average embedding in the database by 
+            # calling the save_user_embedding method from the UserEmbeddingData class.
         except Exception as e:
             raise AppException(e, sys) from e

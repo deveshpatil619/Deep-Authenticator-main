@@ -66,10 +66,10 @@ async def login_embedding(
         )
         return response
 
-""" After the """
+""" After the register(authentication_user_registration) in authentication we will do the register embedding part"""
 @router.post("/register_embedding")
-async def register_embedding(
-    request: Request,
+async def register_embedding(  ##  function register_embedding takes two arguments, request and files. 
+    request: Request,   ## request is a Request object, and files is a list of binary files that are uploaded by the user.
     files: List[bytes] = File(description="Multiple files as UploadFile"),
 ):
     """This function is used to get the embedding of the user while register
@@ -83,15 +83,17 @@ async def register_embedding(
     """
 
     try:
-        # Get the UUID from the session
-        uuid = request.session.get("uuid")
+        
+        uuid = request.session.get("uuid") # retrieves the UUID from the session.
         if uuid is None:
-            return RedirectResponse(url="/auth", status_code=status.HTTP_302_FOUND)
-        user_embedding_validation = UserRegisterEmbeddingValidation(uuid)
+            return RedirectResponse(url="/auth", status_code=status.HTTP_302_FOUND) ##checks if the UUID is present
+            # in the session. If it's not present, the function returns a redirect to the "/auth" endpoint with a 302 Found HTTP status code.
+        user_embedding_validation = UserRegisterEmbeddingValidation(uuid) ##creates an instance of the UserRegisterEmbeddingValidation class and passes the UUID as an argument.
 
-        # Save the embeddings
+        # saves the user's embeddings to the database.
         user_embedding_validation.save_embedding(files)
-
+#If the embeddings are saved successfully, the function returns a JSONResponse object with a 200 OK HTTP status code
+#  and a message that says "Embedding Stored Successfully in Database". The UUID is also included in the headers
         msg = "Embedding Stored Successfully in Database"
         response = JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -100,6 +102,8 @@ async def register_embedding(
         )
         return response
     except Exception as e:
+## If there is an error in storing the embeddings, the function returns a JSONResponse object with a 404 Not Found
+#  HTTP status code and a message that says "Error in Storing Embedding in Database"
         msg = "Error in Storing Embedding in Database"
         response = JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
