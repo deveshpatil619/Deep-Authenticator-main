@@ -446,15 +446,16 @@ async def login_for_access_token(response: Response, login) -> dict:
         )
         return {"status": False, "uuid": None, "response": response}
 
-
-@router.get("/", response_class=JSONResponse)
-async def authentication_page(request: Request):
+# This code is a FastAPI endpoint function that maps to the "/register" route.
+@router.get("/", response_class=JSONResponse) ## When a GET request is made to the "/register" endpoint, the function authentication_page will be executed.
+async def authentication_page(request: Request): ##The function takes a single argument request of type Request from the FastAPI library.
     """Login GET route
 
     Returns:
         _type_: JSONResponse
     """
-    try:
+    try: ## Inside the function, the function returns a JSONResponse with a status code of 200 (OK) and 
+        # a content of {"message": "Authentication Page"}.
         return JSONResponse(
             status_code=status.HTTP_200_OK, content={"message": "Authentication Page"}
         )
@@ -505,23 +506,28 @@ async def login(request: Request, login: Login):
         return response
 
 
-@router.get("/register", response_class=JSONResponse)
-async def authentication_page(request: Request):
+##This code is a FastAPI endpoint function that maps to the "/register" route.
+@router.get("/register", response_class=JSONResponse) #When a GET request is made to the "/register" endpoint, the function authentication_page will be executed.
+async def authentication_page(request: Request): ## function takes a single argument request of type Request from the FastAPI library.
+
+
     """Route for User Registration
 
     Returns:
         _type_: Register Response
     """
     try:
-        return JSONResponse(
+        return JSONResponse( ##the function returns a JSONResponse with a status code of 200 (OK) and a content of {"message": "Registration Page"}.
             status_code=status.HTTP_200_OK, content={"message": "Registration Page"}
         )
     except Exception as e:
         raise e
 
-
-@router.post("/register", response_class=JSONResponse)
-async def register_user(request: Request, register: Register):
+## code block defines a FastAPI endpoint for registering a new user.
+@router.post("/register", response_class=JSONResponse) ##It starts with the "@router.post" decorator which maps this function to the /register endpoint for HTTP POST requests.
+async def register_user(request: Request, register: Register): ## It takes two arguments: "request" and
+    # "register". "request" is a standard FastAPI request object, while "register" is a Pydantic model 
+    # representing the information that the user provides during registration.
 
     """Post request to register a user
 
@@ -540,7 +546,8 @@ async def register_user(request: Request, register: Register):
     Returns:
         _type_: Will redirect to the embedding generation route and return the UUID of user
     """
-    try:
+    try: ## Within the function, the user information is extracted from the "register" object and assigned to 
+        #separate variables: name, username, password1, password2, email_id, and ph_no.
         name = register.Name
         username = register.username
         password1 = register.password1
@@ -548,13 +555,14 @@ async def register_user(request: Request, register: Register):
         email_id = register.email_id
         ph_no = register.ph_no
 
-        # Add uuid to the session
+        # The user's UUID is then added to the session using the user object's uuid_ attribute.
         user = User(name, username, email_id, ph_no, password1, password2)
         request.session["uuid"] = user.uuid_
 
-        # Validation of the user input data to check the format of the data
+        #user information is then passed to a RegisterValidation object for validation by calling the validate_registration method.
         user_registration = RegisterValidation(user)
-
+        #If the validation fails, a JSONResponse object with status code 401 (Unauthorized) is returned, along
+        #  with an error message indicating why the validation failed.
         validate_regitration = user_registration.validate_registration()
         if not validate_regitration["status"]:
             msg = validate_regitration["msg"]
@@ -566,8 +574,11 @@ async def register_user(request: Request, register: Register):
 
         # Save user if the validation is successful
         validation_status = user_registration.authenticate_user_registration()
-
+        ## If the validation is successful, the authenticate_user_registration method is called to save the user
+        # information to the database.
         msg = "Registration Successful...Please Login to continue"
+        ##the user is successfully registered, a JSONResponse object with status code 200 (OK) is returned,
+        # along with a message indicating that the registration was successful. The UUID of the user is also returned in the headers.
         response = JSONResponse(
             status_code=status.HTTP_200_OK,
             content={"status": True, "message": validation_status["msg"]},
