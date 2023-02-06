@@ -101,62 +101,69 @@ class LoginValidation:
         except Exception as e:
             raise AppException(e, sys) from e
 
-
+##  RegisterValidation which has a set of methods to validate the registration of a user.
 class RegisterValidation:
 
     """_summary_: This authenticates the user and returns the status
     """
-
-    def __init__(self, user: User) -> None:
+    
+    
+    def __init__(self, user: User) -> None:  ## method and accepts one argument, "user", of type "User". The return type is specified as "None"
         try:
-            self.user = user
+# # It initializes the user, regular expression to validate email, UUID, UserData object and bcrypt context.
+            self.user = user  ## assigns the argument passed to the constructor, "user", to an instance variable named "user".
             self.regex = re.compile(
                 r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+"
-            )
-            self.uuid = self.user.uuid_
-            self.userdata = UserData()
-            self.bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+            ) # The pattern is used to match strings that match a specific format for an email address.
+            self.uuid = self.user.uuid_ ##"uuid_" attribute of the "user" object to an instance variable named "uuid".
+            self.userdata = UserData()  ## instance of the "UserData" class and assigns it to an instance variable named "userdata".
+            self.bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto") ## creates a "CryptContext" object, 
+            #which is used for handling password hashing, using the "bcrypt" scheme. The "deprecated" argument is
+            #set to "auto", which means that deprecated schemes will be automatically replaced with the most secure available scheme.
         except Exception as e:
             raise e
 
     def validate(self) -> bool:
 
-        """This checks all the validation conditions for the user registration
+        """The method that checks all validation conditions for user registration such as if all required fields are
+         filled, email is valid, password length is between 8 and 16, password match, and details already exists or 
+         not. It returns a message.
 
         Returns:
             _type_: string
         """
         try:
-            msg = ""
+            msg = ""  ## empty string
             if self.user.Name == None:
-                msg += "Name is required"
+                msg += "Name is required"  ## Name attribute of the user object is None, msg is updated with the string "Name is required".
 
             if self.user.username == None:
-                msg += "Username is required"
+                msg += "Username is required" ##username attribute of the user object is None, msg is updated with the string "Username is required".
 
             if self.user.email_id == None:
-                msg += "Email is required"
+                msg += "Email is required" ## email_id attribute of the user object is None, msg is updated with the string "Email is required".
+
 
             if self.user.ph_no == None:
-                msg += "Phone Number is required"
+                msg += "Phone Number is required" ## ph_no attribute of the user object is None, msg is updated with the string "Phone Number is required"
 
             if self.user.password1 == None:
-                msg += "Password is required"
+                msg += "Password is required" ## password1 attribute of the user object is None, msg is updated with the string "Password is required".
 
             if self.user.password2 == None:
-                msg += "Confirm Password is required"
+                msg += "Confirm Password is required" ## password2 attribute of the user object is None, msg is updated with the string "Confirm Password is required".
 
             if not self.is_email_valid():
-                msg += "Email is not valid"
+                msg += "Email is not valid" ## if Email is not valid msg is updated with the string "Email is not valid". This is determined by calling the method is_email_valid.
 
             if not self.is_password_valid():
-                msg += "Length of the pass`word should be between 8 and 16"
+                msg += "Length of the pass`word should be between 8 and 16" ##If the password is not valid, msg is updated with the string "Length of the password should be between 8 and 16". This is determined by calling the method is_password_valid.
 
             if not self.is_password_match():
-                msg += "Password does not match"
+                msg += "Password does not match" ## If the password does not match, msg is updated with the string "Password does not match". This is determined by calling the method is_password_match.
 
             if not self.is_details_exists():
-                msg += "User already exists"
+                msg += "User already exists"  ## If the user details already exist, msg is updated with the string "User already exists". This is determined by calling the method is_details_exists.
 
             return msg
         except Exception as e:
@@ -168,7 +175,8 @@ class RegisterValidation:
         Returns:
             bool: True if the email id is valid else False
         """
-        if re.fullmatch(self.regex, self.user.email_id):
+        #The re.fullmatch method returns a Match object if there is a match, and None if no match was found. 
+        if re.fullmatch(self.regex, self.user.email_id): ## Try to apply the pattern to all of the string, returning a Match object, or None if no match was found.
             return True
         else:
             return False
