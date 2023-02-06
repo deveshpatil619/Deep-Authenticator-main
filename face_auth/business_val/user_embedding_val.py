@@ -36,38 +36,42 @@ class UserLoginEmbeddingValidation:
             raise e
 
     @staticmethod
+    #generate_embedding that takes an input argument img_array which is of type np.ndarray (NumPy array).
     def generate_embedding(img_array: np.ndarray) -> np.ndarray:
         """
         Generate embedding from image array"""
         try:
+            ##method first calls a function detect_face with the input img_array and specified detector_backend and
+            # enforce_detection arguments. The purpose of this function is to detect faces in the input image.
             faces = detect_face(
                 img_array,
-                detector_backend=DETECTOR_BACKEND,
-                enforce_detection=ENFORCE_DETECTION,
+                detector_backend=DETECTOR_BACKEND, ## we are using mtcnn algorithm for face detection
+                enforce_detection=ENFORCE_DETECTION, ## ENFORCE_DETECTION is set to false
             )
-            # Generate embedding from face
-            embed = DeepFace.represent(
-                img_path=faces[0],
-                model_name=EMBEDDING_MODEL_NAME,
-                enforce_detection=False,
+            # function is used to generate an embedding from the face
+            embed = DeepFace.represent(  ## calls another function DeepFace.
+                img_path=faces[0], ##represent with the input faces[0] which is the first face detected
+                model_name=EMBEDDING_MODEL_NAME, ## we using Facenet algorithm for generating the embeddings
+                enforce_detection=False, ## 
             )
-            return embed
+            return embed ## The generated embedding is then returned. 
         except Exception as e:
             raise AppException(e, sys) from e
 
     @staticmethod
-    def generate_embedding_list(files: List[Bytes]) -> List[np.ndarray]:
+    def generate_embedding_list(files: List[Bytes]) -> List[np.ndarray]: ##The method takes a list of files 
+        #(binary image data) as input and returns a list of embeddings (np.ndarray).
         """
-        Generate embedding list from image array
+        The code defines a static method generate_embedding_list in the class UserLoginEmbeddingValidation.
         """
-        embedding_list = []
-        for contents in files:
-            img = Image.open(io.BytesIO(contents))
-            # read image array
-            img_array = np.array(img)
-            # Detect faces
-            embed = UserLoginEmbeddingValidation.generate_embedding(img_array)
-            embedding_list.append(embed)
+        embedding_list = []  ## creating empty list to store the embeddings
+        for contents in files: ## It then loops over the binary data in files and for each binary data:
+            img = Image.open(io.BytesIO(contents)) # Converts it to an image using the Image.open method from the PIL library. 
+
+            img_array = np.array(img) ## Converts the image to a numpy array using the np.array method.
+            
+            embed = UserLoginEmbeddingValidation.generate_embedding(img_array) # the embedding of the image using the generate_embedding method from the same class.
+            embedding_list.append(embed) #Adds the embedding to the embedding_list.
         return embedding_list
 
     @staticmethod
