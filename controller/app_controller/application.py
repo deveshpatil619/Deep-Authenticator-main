@@ -66,7 +66,7 @@ async def login_embedding(
         )
         return response
 
-
+""" After the """
 @router.post("/register_embedding")
 async def register_embedding(
     request: Request,

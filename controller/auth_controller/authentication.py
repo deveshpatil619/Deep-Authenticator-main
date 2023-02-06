@@ -383,10 +383,13 @@ async def get_current_user(request: Request):
         )
         return response
 
-
+## The function create_access_token generates a JSON Web Token (JWT) given the uuid and username of a user.
 def create_access_token(
-    uuid: str, username: str, expires_delta: Optional[timedelta] = None
-) -> str:
+    uuid: str, username: str, expires_delta: Optional[timedelta] = None 
+) -> str:  ## The input parameters of the function are:
+#uuid (str): the unique identifier of the user
+#username (str): the username of the user
+#expires_delta (timedelta, optional): the token expiration time, which is optional and by default is set to 15 minutes after the current time 
     """This function is used to create the access token
 
     Args:
@@ -400,18 +403,19 @@ def create_access_token(
         _type_: _description_
     """
 
-    try:
+    try: ## secret_key and algorithm are used as the secret key and algorithm for the encoding.
         secret_key = SECRET_KEY
         algorithm = ALGORITHM
 
-        encode = {"sub": uuid, "username": username}
+        encode = {"sub": uuid, "username": username} #The encode dictionary contains the information to be included in the JWT, and has two keys: sub and username.
+                                                     # sub had uuid in it 
         if expires_delta:
-            expire = datetime.utcnow() + expires_delta
-        else:
+            expire = datetime.utcnow() + expires_delta 
+        else: ##The token expiration is set to the current time plus the expires_delta (or 15 minutes if it's not provided).
             expire = datetime.utcnow() + timedelta(minutes=15)
         encode.update({"exp": expire})
         # return jwt.encode(encode, Configuration().SECRET_KEY, algorithm=Configuration().ALGORITHM)
-        return jwt.encode(encode, secret_key, algorithm=algorithm)
+        return jwt.encode(encode, secret_key, algorithm=algorithm) ## The encode dictionary is updated with the exp key and its value set to the token expiration.
     except Exception as e:
         raise e
 
