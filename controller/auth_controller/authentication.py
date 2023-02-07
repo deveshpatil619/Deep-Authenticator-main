@@ -136,18 +136,22 @@ async def login_for_access_token(response: Response, login) -> dict:  ##The func
         user_validation = LoginValidation(login.email_id, login.password) ##instance of the LoginValidation class
         # is created with the "email_id" and "password" from the "login" argument.
 
-        user: Optional[str] = user_validation.authenticate_user_login()
-        if not user:
-            return {"status": False, "uuid": None, "response": response}
-        token_expires = timedelta(minutes=15)
+        user: Optional[str] = user_validation.authenticate_user_login() ## in instance user the output of
+# authenticate_user_login() authenticates the user and returns the token if the user is authenticated
+        if not user: ## If the user credentials are not valid, returns a dictionary 
+            return {"status": False, "uuid": None, "response": response} 
+        token_expires = timedelta(minutes=15) ## The token expiration time is set to 15 minutes
         token = create_access_token(
-            user["UUID"], user["username"], expires_delta=token_expires
+            user["UUID"], user["username"], expires_delta=token_expires ## If the user credentials are valid,
+#creates an access token for the user with create_access_token function, which takes the user's UUID, username, and token expiration time as inputs.
         )
-        response.set_cookie(key="access_token", value=token, httponly=True)
-        return {"status": True, "uuid": user["UUID"], "response": response}
+        response.set_cookie(key="access_token", value=token, httponly=True)  ## Sets the access token as a cookie in the response object
+        return {"status": True, "uuid": user["UUID"], "response": response} ## Returns the dictionary
+#{"status": True, "uuid": user["UUID"], "response": response} indicating the success of setting the access token, along with the user's UUID and the response object.
     except Exception as e:
         msg = "Failed to set access token"
-        response = JSONResponse(
+        response = JSONResponse( ## n case of any exceptions, sets the response status to HTTP_404_NOT_FOUND 
+## with JSONResponse and returns {"status": False, "uuid": None, "response": response}.
             status_code=status.HTTP_404_NOT_FOUND, content={"message": msg}
         )
         return {"status": False, "uuid": None, "response": response}

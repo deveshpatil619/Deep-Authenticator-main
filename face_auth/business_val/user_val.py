@@ -77,7 +77,7 @@ class LoginValidation:
             return {"status": False, "msg": self.validate()} ## If it is not 0, it returns a dictionary with status set to False and msg set to the result of the validate method.
         return {"status": True} #If the length of the result is 0, it returns a dictionary with status set to True.
 
-    def authenticate_user_login(self) -> Optional[str]:
+    def authenticate_user_login(self) -> Optional[str]:  ## can either return a string value, which is the user data, or None if the authentication fails.
         """_summary_: This authenticates the user and returns the token
         if the user is authenticated
 
@@ -88,18 +88,21 @@ class LoginValidation:
         try:
 
             logging.info("Authenticating the user details.....")
-            if self.validate_login()["status"]:
-                userdata = UserData()
+            if self.validate_login()["status"]: ##  checks if the result of calling validate_login method on 
+# the current object is {"status": True}. If it is, the function continues to execute, otherwise it returns False.
+                userdata = UserData() ## function creates an object of the UserData class This class will have all the mongo db operations for user data .
                 logging.info("Fetching the user details from the database.....")
-                user_login_val = userdata.get_user({"email_id": self.email_id})
-                if not user_login_val:
-                    logging.info("User not found while Login")
+                user_login_val = userdata.get_user({"email_id": self.email_id}) ## retrieves the user data using get_user method of userdata object.
+# It retrieves the data of the user whose email id is the same as the email_id attribute of the current object.
+                if not user_login_val: ## The function checks if the user data exists by checking the truthiness of the user_login_val
+                    logging.info("User not found while Login") 
                     return False
-                if not self.verify_password(self.password, user_login_val["password"]):
+                if not self.verify_password(self.password, user_login_val["password"]): ## verifies the password
+# using verify_password method by passing self.password and user_login_val["password"] as arguments
                     logging.info("Password is incorrect")
                     return False
                 logging.info("User authenticated successfully....")
-                return user_login_val
+                return user_login_val  ## returns the user data.
             return False
         except Exception as e:
             raise AppException(e, sys) from e
