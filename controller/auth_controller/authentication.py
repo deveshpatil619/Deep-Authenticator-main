@@ -147,6 +147,9 @@ async def login_for_access_token(response: Response, login) -> dict:  ##The func
 #creates an access token for the user with create_access_token function, which takes the user's UUID, username, and token expiration time as inputs.
         )
         response.set_cookie(key="access_token", value=token, httponly=True)  ## Sets the access token as a cookie in the response object
+## This is a method that sets a cookie on the response.
+##"httponly": This is a Boolean argument that, when set to "True", restricts the access to the cookie from JavaScript code.
+#  It helps in improving the security of the application.
         return {"status": True, "uuid": user["UUID"], "response": response} ## Returns the dictionary
 #{"status": True, "uuid": user["UUID"], "response": response} indicating the success of setting the access token, along with the user's UUID and the response object.
     except Exception as e:

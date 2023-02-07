@@ -18,18 +18,21 @@ from face_auth.data_access.user_embedding_data import UserEmbeddingData
 from face_auth.exception import AppException
 from face_auth.logger import logging
 
-
+## validates a user's embedding information in the database.
 class UserLoginEmbeddingValidation:
-    def __init__(self, uuid_: str) -> None:
+    def __init__(self, uuid_: str) -> None:  
+    ## the constructor method that takes a user's UUID as an argument and sets it as an instance variable 
+    # self.uuid_. It also creates an instance of the UserEmbeddingData class and calls its get_user_embedding 
+    # method to retrieve the user's embedding data and stores it as self.user.
         self.uuid_ = uuid_
         self.user_embedding_data = UserEmbeddingData()
         self.user = self.user_embedding_data.get_user_embedding(uuid_)
 
-    def validate(self) -> bool:
+    def validate(self) -> bool: ## the method that validates the user's information and returns a boolean value
         try:
-            if self.user["UUID"] == None:
+            if self.user["UUID"] == None: ## checks if the UUID of the user is None. If it is, returns False.
                 return False
-            if self.user["user_embed"] == None:
+            if self.user["user_embed"] == None: #  checks if the user's embedding information is None. If it is, returns False.
                 return False
             return True
         except Exception as e:

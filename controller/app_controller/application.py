@@ -19,9 +19,13 @@ router = APIRouter(
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
+### after the manual login process we will bw redirected to login embedding
+# code using the FastAPI library, which implements a REST API endpoint for user authentication based on face embedding.
+@router.post("/") # line defines a POST HTTP method on the root URL ("/") of the API, with the router object being a FastAPI Router instance.
 
-@router.post("/")
-async def login_embedding(
+async def login_embedding( ## this is the main function for the endpoint, with the arguments:
+                        #request: the FastAPI Request object for the incoming request.
+                        #files: a list of uploaded files in binary format, described as "Multiple files as UploadFile".
     request: Request,
     files: List[bytes] = File(description="Multiple files as UploadFile"),
 ):
@@ -36,16 +40,19 @@ async def login_embedding(
     """
 
     try:
-        user = await get_current_user(request)
-        if user is None:
+        user = await get_current_user(request) ## gets the current user information by calling the get_current_user function and passing the request object.
+        if user is None: #if the user is not found, a redirect response to the "/auth" URL is returned with a 302 status code.
             return RedirectResponse(url="/auth", status_code=status.HTTP_302_FOUND)
 
-        user_embedding_validation = UserLoginEmbeddingValidation(user["uuid"])
+        user_embedding_validation = UserLoginEmbeddingValidation(user["uuid"]) ## creates an instance of the
+# UserLoginEmbeddingValidation class with the user's unique identifier (UUID).
 
         # Compare embedding
-        user_simmilariy_status = user_embedding_validation.compare_embedding(files)
+        user_simmilariy_status = user_embedding_validation.compare_embedding(files)# calls the compare_embedding
+# method on the user_embedding_validation instance to compare the face embedding of the uploaded files with the stored embedding of the user.
 
-        if user_simmilariy_status:
+        if user_simmilariy_status: ## if the embeddings match, a JSON response with status code 200 and a
+        # message indicating successful authentication is returned.
             msg = "User is authenticated"
             response = JSONResponse(
                 status_code=status.HTTP_200_OK, content={"status": True, "message": msg}
@@ -53,14 +60,15 @@ async def login_embedding(
             return response
         else:
             msg = "User is NOT authenticated"
-            response = JSONResponse(
+            response = JSONResponse( ##if the embeddings do not match, a JSON response with status code 401 and 
+            #a message indicating unsuccessful authentication is returned.
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={"status": False, "message": msg},
             )
             return response
     except Exception as e:
         msg = "Error in Login Embedding in Database"
-        response = JSONResponse(
+        response = JSONResponse( #an exception occurs, a JSON response with status code 404 and an error message is returned.
             status_code=status.HTTP_404_NOT_FOUND,
             content={"status": False, "message": msg},
         )
