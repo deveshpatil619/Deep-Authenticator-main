@@ -147,8 +147,8 @@ async def login_for_access_token(response: Response, login) -> dict:
         )
         return {"status": False, "uuid": None, "response": response}
 
-# This code is a FastAPI endpoint function that maps to the "/register" route.
-@router.get("/", response_class=JSONResponse) ## When a GET request is made to the "/register" endpoint, the function authentication_page will be executed.
+# This code is a FastAPI endpoint function that maps to the "/" route.
+@router.get("/", response_class=JSONResponse) ## When a GET request is made to the "/" endpoint, the function authentication_page will be executed.
 async def authentication_page(request: Request): ##The function takes a single argument request of type Request from the FastAPI library.
     """Login GET route
 
@@ -163,9 +163,9 @@ async def authentication_page(request: Request): ##The function takes a single a
     except Exception as e:
         raise e
 
-
-@router.post("/", response_class=JSONResponse)
-async def login(request: Request, login: Login):
+## code is a FastAPI route handler for handling POST requests to the "/" endpoint.
+@router.post("/", response_class=JSONResponse) ##the response type will be of JSONResponse.
+async def login(request: Request, login: Login): ## The function takes in two arguments, request of type Request and login of type Login.
     """Route for User Login
 
     Returns:
@@ -173,21 +173,22 @@ async def login(request: Request, login: Login):
     """
     try:
         # response = RedirectResponse(url="/application/", status_code=status.HTTP_302_FOUND)
-        msg = "Login Successful"
-        response = JSONResponse(
+        msg = "Login Successful" # sets the value of msg to "Login Successful".
+        response = JSONResponse(  ##  line creates a JSONResponse object with a status code of HTTP_200_OK and a content of {"message": "Login Successful"}.
             status_code=status.HTTP_200_OK, content={"message": msg}
         )
-        token_response = await login_for_access_token(response=response, login=login)
-        if not token_response["status"]:
-            msg = "Incorrect Username and password"
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+        token_response = await login_for_access_token(response=response, login=login) ##calls the function 
+        # login_for_access_token and awaits its response. The function takes in two arguments, response and login.
+        if not token_response["status"]: ## checks if the value of the "status" key in token_response is False.
+            msg = "Incorrect Username and password" ## if statement evaluates to True, the value of msg is set to "Incorrect Username and password"
+            return JSONResponse(    
+                status_code=status.HTTP_401_UNAUTHORIZED, ##If the previous if statement evaluates to True, 
+                #this line returns a JSONResponse object with a status code of HTTP_401_UNAUTHORIZED 
+                # and a content of {"status": False, "message": "Incorrect Username and password"}.
                 content={"status": False, "message": msg},
             )
-            # return RedirectResponse(url="/", status_code=status.HTTP_401_UNAUTHORIZED, headers={"msg": msg})
-        # msg = "Login Successfull"
-        # response = JSONResponse(status_code=status.HTTP_200_OK, content={"message": msg}, headers={"uuid": "abda"})
-        response.headers["uuid"] = token_response["uuid"]
+          
+        response.headers["uuid"] = token_response["uuid"] #if statement evaluates to False, the "uuid" key in the headers dictionary of the response object is set to the value of the "uuid" key in token_response.
 
         return response
 
