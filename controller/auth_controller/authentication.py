@@ -120,17 +120,22 @@ def create_access_token(
     except Exception as e:
         raise e
 
+## defines a FastAPI route that implements a login logic for obtaining an access token.
+@router.post("/token")#decorator "@router.post("/token")" that maps the route to the function defined below it. The "/token" URL endpoint will be accessible using HTTP POST method.
+async def login_for_access_token(response: Response, login) -> dict:  ##The function "login_for_access_token" 
+#takes two arguments "response" and "login", where "response" is an instance of the Response class and "login" is 
+#an instance of the "Login" class defined elsewhere. The function returns a dictionary with three keys: "status", "uuid" and "response".
 
-@router.post("/token")
-async def login_for_access_token(response: Response, login) -> dict:
     """Set the access token
 
     Returns:
         dict: response
     """
 
-    try:
-        user_validation = LoginValidation(login.email_id, login.password)
+    try: #validates the user credentials with the LoginValidation class
+        user_validation = LoginValidation(login.email_id, login.password) ##instance of the LoginValidation class
+        # is created with the "email_id" and "password" from the "login" argument.
+
         user: Optional[str] = user_validation.authenticate_user_login()
         if not user:
             return {"status": False, "uuid": None, "response": response}

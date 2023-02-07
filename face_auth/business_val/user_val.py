@@ -16,45 +16,48 @@ class LoginValidation:
     """_summary_
     """
 
-    def __init__(self, email_id: str, password: str):
+    def __init__(self, email_id: str, password: str): ##constructor of the class which takes email_id and password
+        # as input parameters and sets them as instance variables. 
         """_summary_
 
         Args:
             email_id (str): _description_
             password (str): _description_
         """
-        self.email_id = email_id
-        self.password = password
-        self.regex = re.compile(
+        self.email_id = email_id ## making the instance of email_id
+        self.password = password ## making the instance of password
+        self.regex = re.compile( ## compiles a regular expression pattern used to validate the email.
             r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+"
         )
-
-    def validate(self) -> bool:
+##  The method validates the email_id and password by checking if they are not empty
+    def validate(self) -> bool:   ## returns a boolien output
         """validate: This validates the user input
 
         Args:
             email_id (str): email_id of the user
             password (str): password of the user
         """
-        try:
-            msg = ""
+        try:## It returns an error message if any of the checks fail.
+            msg = "" ## taking empty string to print the message
             if not self.email_id:
                 msg += "Email Id is required"
             if not self.password:
                 msg += "Password is required"
-            if not self.is_email_valid():
+            if not self.is_email_valid(): ## to check if the email id entered is valid or not
                 msg += "Invalid Email Id"
             return msg
         except Exception as e:
             raise e
-
-    def is_email_valid(self) -> bool:
+## function checks if the email id provided by the user is in the correct format or not. 
+    def is_email_valid(self) -> bool:   ## returns a boolien output
+# The function uses the re.fullmatch method from the re module to match the email id with a regular expression self.regex
         if re.fullmatch(self.regex, self.email_id):
-            return True
+            return True ## If the match is found, it returns True, indicating that the email id is in a valid format.
         else:
-            return False
+            return False ## If the match is not found, it returns False, indicating that the email id is not in a valid format
 
-    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
+##purpose of the function is to ensure that the entered password matches the hashed password stored in the database.
+    def verify_password(self, plain_password: str, hashed_password: str) -> bool: ##takes in two arguments: plain_password and hashed_password of type string and returns a boolean value
         """Verify hashed password and plain password.
 
         Args:
@@ -64,15 +67,15 @@ class LoginValidation:
         Returns:
             bool: _description_
         """
-        return bcrypt_context.verify(plain_password, hashed_password)
+        return bcrypt_context.verify(plain_password, hashed_password) ##  bcrypt_context.verify method to verify if the plain_password is equal to the hashed_password.
 
-    def validate_login(self) -> dict:
+    def validate_login(self) -> dict: ## returns a dictionary with two keys status and msg
 
         """This checks all the validation conditions for the user registration
         """
-        if len(self.validate()) != 0:
-            return {"status": False, "msg": self.validate()}
-        return {"status": True}
+        if len(self.validate()) != 0: ##  method checks the length of the result from the validate method
+            return {"status": False, "msg": self.validate()} ## If it is not 0, it returns a dictionary with status set to False and msg set to the result of the validate method.
+        return {"status": True} #If the length of the result is 0, it returns a dictionary with status set to True.
 
     def authenticate_user_login(self) -> Optional[str]:
         """_summary_: This authenticates the user and returns the token
