@@ -188,18 +188,19 @@ async def login(request: Request, login: Login): ## The function takes in two ar
                 content={"status": False, "message": msg},
             )
           
-        response.headers["uuid"] = token_response["uuid"] #if statement evaluates to False, the "uuid" key in the headers dictionary of the response object is set to the value of the "uuid" key in token_response.
+        response.headers["uuid"] = token_response["uuid"] #if statement evaluates to False, the "uuid" key in 
+        #the headers dictionary of the response object is set to the value of the "uuid" key in token_response.
 
-        return response
+        return response ## if statement evaluates to False, this line returns the response object.
 
-    except HTTPException:
-        msg = "UnKnown Error"
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+    except HTTPException: ## This block catches any exception of type HTTPException.
+        msg = "UnKnown Error" ## value of msg to "UnKnown Error".
+        return JSONResponse(    ## This line returns a JSONResponse object with a status code 
+            status_code=status.HTTP_401_UNAUTHORIZED, #of HTTP_401_UNAUTHORIZED and a content of {"status": False, "message": "UnKnown Error"}.
             content={"status": False, "message": msg},
         )
         # return RedirectResponse(url="/", status_code=status.HTTP_401_UNAUTHORIZED, headers={"msg": msg})
-    except Exception as e:
+    except Exception as e:  
         msg = "User NOT Found"
         response = JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
