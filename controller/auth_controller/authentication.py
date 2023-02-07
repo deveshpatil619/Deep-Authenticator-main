@@ -108,8 +108,9 @@ def create_access_token(
         secret_key = SECRET_KEY
         algorithm = ALGORITHM
 
-        encode = {"sub": uuid, "username": username} #The encode dictionary contains the information to be included in the JWT, and has two keys: sub and username.
-                                                     # sub had uuid in it 
+        encode = {"sub": uuid, "username": username} #The encode dictionary contains the information to be included
+        # in the JWT, and has two keys: sub and username.# sub has uuid in it 
+                                                     
         if expires_delta:
             expire = datetime.utcnow() + expires_delta 
         else: ##The token expiration is set to the current time plus the expires_delta (or 15 minutes if it's not provided).
