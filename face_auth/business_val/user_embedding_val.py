@@ -205,3 +205,9 @@ class UserRegisterEmbeddingValidation:
             # calling the save_user_embedding method from the UserEmbeddingData class.
         except Exception as e:
             raise AppException(e, sys) from e
+
+
+
+
+
+            
