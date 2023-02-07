@@ -76,7 +76,8 @@ class UserLoginEmbeddingValidation:
 
     @staticmethod
     def average_embedding(embedding_list: List[np.ndarray]) -> List:
-        """Function to calculate the average embedding of the list of embeddings
+        """static method named "average_embedding" that takes a list of numpy arrays and calculates the
+         average of the arrays.
 
         Args:
             embedding_list (List[np.ndarray]): _description_
@@ -85,8 +86,11 @@ class UserLoginEmbeddingValidation:
             List: _description_
         
         """
+    #function first calculates the mean of the list of embeddings using the numpy function
+    #  "np.mean" with "axis=0".
         avg_embed = np.mean(embedding_list, axis=0)
-        return avg_embed.tolist()
+        return avg_embed.tolist() ## returns the result of the calculation as a list,
+                                     # by converting the numpy array to a list using the "tolist" method.
 
     @staticmethod
     def cosine_simmilarity(db_embedding, current_embedding) -> bool:
@@ -99,14 +103,18 @@ class UserLoginEmbeddingValidation:
         Returns:
             int: simmilarity value
         """
+#The cosine similarity is calculated by taking the dot product of the two arrays and dividing it by the
+# product of their norms, which are calculated using the numpy functions "np.dot" and "np.linalg.norm".
+# The result of this calculation is then returned.
         try:
             return np.dot(db_embedding, current_embedding) / (
                 np.linalg.norm(db_embedding) * np.linalg.norm(current_embedding)
             )
         except Exception as e:
             raise AppException(e, sys) from e
-
-    def compare_embedding(self, files: bytes) -> bool:
+##  implementation of a function called compare_embedding which is used to compare an image file's
+#  embedding to the one stored in the database for a user
+    def compare_embedding(self, files: bytes) -> bool: ## function has a single argument files which is expected to be in bytes format.
         """Function to compare the embedding of the current image with the embedding of the database
 
         Args:
@@ -117,21 +125,23 @@ class UserLoginEmbeddingValidation:
         """
         try:
 
-            if self.user:
+            if self.user: 
                 logging.info("Validating User Embedding ......")
                 # Validate user embedding
                 if self.validate() == False:
                     return False
 
                 logging.info("Embedding Validation Successfull.......")
-                # Generate embedding list
 
+                # Generate embedding list
                 logging.info("Generating Embedding List .......")
                 embedding_list = UserLoginEmbeddingValidation.generate_embedding_list(
                     files
                 )
-
                 logging.info("Embedding List generated.......")
+
+                
+
                 # Calculate average embedding
 
                 logging.info("Calculating Average Embedding .......")
@@ -140,17 +150,17 @@ class UserLoginEmbeddingValidation:
                 )
                 logging.info("Average Embedding calculated.......")
 
-                # Get embedding from database
+                # code then gets the embedding stored in the database for the user
                 db_embedding = self.user["user_embed"]
 
                 logging.info("Calculating Cosine Similarity .......")
-                # Calculate cosine similarity
+                # Calculate cosine similarity  between the average embedding and the embedding stored in the database
                 simmilarity = UserLoginEmbeddingValidation.cosine_simmilarity(
                     db_embedding, avg_embedding_list
                 )
                 logging.info("Cosine Similarity calculated.......")
-
-                if simmilarity >= SIMILARITY_THRESHOLD:
+## code checks if the cosine similarity is greater than or equal to a pre-defined constant SIMILARITY_THRESHOLD
+                if simmilarity >= SIMILARITY_THRESHOLD:  ## SIMILARITY_THRESHOLD = 0.75
                     logging.info("User Authenticated Successfully.......")
                     return True
                 else:
@@ -210,4 +220,4 @@ class UserRegisterEmbeddingValidation:
 
 
 
-            
+
