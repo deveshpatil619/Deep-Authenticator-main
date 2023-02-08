@@ -17,7 +17,7 @@ router = APIRouter(
     responses={"401": {"description": "Not Authorized!!!"}},
 )
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1" 
 
 ### after the manual login process we will bw redirected to login embedding
 # code using the FastAPI library, which implements a REST API endpoint for user authentication based on face embedding.
@@ -118,3 +118,11 @@ async def register_embedding(  ##  function register_embedding takes two argumen
             content={"status": True, "message": msg},
         )
         return response
+
+
+
+
+
+
+
+

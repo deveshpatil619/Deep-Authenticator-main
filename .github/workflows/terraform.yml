@@ -50,3 +50,16 @@ jobs:
         id: terraform-apply
         run: |
           terraform -chdir=infrastructure/ apply --auto-approve
+
+
+
+
+
+
+
+
+
+
+
+
+

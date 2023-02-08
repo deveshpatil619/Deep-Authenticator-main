@@ -1,41 +1,49 @@
-name: Deploy Application Docker Image to Azure Web App Service
+## This is a GitHub Actions workflow code for deploying a Docker Image of an application to Azure Web App Service. 
 
-on:
+name: Deploy Application Docker Image to Azure Web App Service
+##  The workflow is triggered when changes are pushed to the main branch 
+on: 
   push:
     branches:
       - main
-    paths-ignore:
+    paths-ignore: ## and ignore changes to certain paths such as README.md, infrastructure, and docs.
       - "README.md"
       - "infrastructure/*"
       - "docs"
 
+## The workflow has a single job named build that runs on ubuntu-latest. This job contains the following steps:
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout  ## Checkout - uses the actions/checkout action to check out the code from the GitHub repository.
         uses: actions/checkout@v2
-
-      - name: Login to Azure Container Registry
+#Login to Azure Container Registry - uses the azure/docker-login action to log in to the Azure Container Registry, 
+#using the login server URL, username, and password stored in the GitHub repository secrets.
+      - name: Login to Azure Container Registry 
         uses: azure/docker-login@v1
         with:
           login-server: ${{ secrets.AZURE_LOGIN_SERVER }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
-
+## Build and Push Application Image to Azure Container Registry - uses a shell script to build the Docker image 
+# of the application and pushes it to the Azure Container Registry. The repository name and the current commit SHA 
+# are used as the image tag.
       - name: Build and Push Application Image to Azure Container Registry
         id: docker-push
         run: |
           docker build -t ${{ secrets.AZURE_LOGIN_SERVER }}/${{ secrets.REPO_NAME }}:${{ github.sha }} .
 
           docker push ${{ secrets.AZURE_LOGIN_SERVER }}/${{ secrets.REPO_NAME }}:${{ github.sha }}
-
+## Login via Azure CLI - uses the azure/login action to log in to the Azure CLI using the Azure credentials 
+#stored in the GitHub repository secrets.
       - name: Login via Azure CLI
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
+## Deploy to Azure Web App Service - uses the azure/webapps-deploy action to deploy the Docker image of the
+#application to the Azure Web App Service, using the name of the app and the Docker image information from the previous step.
       - name: Deploy to Azure Web App Service
         uses: azure/webapps-deploy@v2
         with:
