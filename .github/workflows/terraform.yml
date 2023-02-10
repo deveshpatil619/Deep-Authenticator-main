@@ -1,5 +1,7 @@
-name: Apply changest to Infrastructure
+## This is a Github Actions workflow that automates the process of applying changes to an infrastructure.
 
+name: Apply changes to Infrastructure
+## It triggers the workflow on pushes to the main branch that only modify the infrastructure/* paths.
 on:
   push:
     branches:
@@ -8,14 +10,14 @@ on:
       - infrastructure/*
 
 jobs:
-  terraform:
+  terraform: #The workflow has a single job, named Terraform, which runs on an Ubuntu virtual machine in a production environment.
     name: "Terraform"
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-    runs-on: ubuntu-latest
+    env: ## The Terraform job sets the following environment variables:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }} ## ARM_CLIENT_ID: the client ID of an Azure Active Directory application that has access to the Azure Subscription.
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }} ## ARM_CLIENT_SECRET: the client secret of the Azure AD application.
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} ## the ID of the Azure Subscription.
+      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }} ## the ID of the Azure AD tenant.
+    runs-on: ubuntu-latest ##Terraform, which runs on an Ubuntu virtual machine in a production environment.
     environment: production
 
     defaults:
@@ -23,32 +25,32 @@ jobs:
         shell: bash
 
     steps:
-      - name: Checkout
+      - name: Checkout ## step checks out the repository's code.
         uses: actions/checkout@v2
 
-      - name: Format the terraform modules
+      - name: Format the terraform modules # step uses the terraform command to format the Terraform modules under the infrastructure/ directory.
         id: terraform-fmt
         run: |
           terraform -chdir=infrastructure/ fmt -recursive
 
-      - name: Initialize the terraform modules
+      - name: Initialize the terraform modules #step uses the terraform command to initialize the Terraform backend and modules.
         id: terraform-init
         run: |
           terraform -chdir=infrastructure/ init
 
-      - name: Validate the terraform modules
+      - name: Validate the terraform modules # step uses the terraform command to validate the Terraform configuration.
         id: terraform-validate
         run: |
           terraform -chdir=infrastructure/ validate
 
-      - name: Plan the terraform modules
+      - name: Plan the terraform modules # step uses the terraform command to create an execution plan for the Terraform configuration.
         id: terraform-plan
         run: |
           terraform -chdir=infrastructure/ plan
 
-      - name: Apply the terraform modules
+      - name: Apply the terraform modules #step uses the terraform command to apply the changes to the infrastructure. 
         id: terraform-apply
-        run: |
+        run: | ##The --auto-approve flag automatically approves the plan, so no manual approval is required.
           terraform -chdir=infrastructure/ apply --auto-approve
 
 
