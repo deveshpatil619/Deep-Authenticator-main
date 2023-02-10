@@ -49,3 +49,7 @@ jobs:
         with:
           app-name: faceauth619
           images: ${{ secrets.AZURE_LOGIN_SERVER }}/${{ secrets.REPO_NAME }}:${{ github.sha }}
+
+
+
+          
