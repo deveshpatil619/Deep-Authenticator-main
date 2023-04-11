@@ -19,3 +19,5 @@ provider "azurerm" { ##  This block sets up the Azure provider. The features {} 
 module "web_app" { ## his block declares a Terraform module named "web_app"
   source = "./web_app" ## and specifies the source for the module as the "./web_app" directory.
 }
+
+
